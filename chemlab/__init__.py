@@ -13,4 +13,4 @@ try:
     sip.setapi('QUrl', 2)
     sip.setapi('QVariant', 2)
 except ValueError as e:
-    raise RuntimeError('Could not set API version (%s): did you import PyQt4 directly?' % e)
+    raise RuntimeError('Could not set API version (%s): did you import PySide directly?' % e)

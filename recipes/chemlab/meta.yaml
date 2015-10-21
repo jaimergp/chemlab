@@ -3,18 +3,18 @@ package:
   version: 0.4.1
 
 source:
-  git_url: https://github.com/chemlab/chemlab.git
-  git_tag: v0.4.1
+  path: ../../
 
 requirements:
   build:
-    - python
+    - python 3.4*
     - setuptools
     - cython
     - numpy
+    - mingwpy
 
   run:
-    - python
+    - python 3.4*
     - ipython-notebook
     - numpy
     - scipy

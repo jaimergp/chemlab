@@ -25,6 +25,8 @@ source:
 requirements:
   build:
     - python
+    - setuptools
+    - mingw
 
   run:
     - python
