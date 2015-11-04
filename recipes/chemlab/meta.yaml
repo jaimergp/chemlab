@@ -10,15 +10,15 @@ requirements:
     - python 3.4*
     - setuptools
     - cython
-    - numpy
-    - mingwpy
+    - numpy 1.9*
+    # - mingwpy
 
   run:
     - python 3.4*
     - ipython-notebook
-    - numpy
+    - numpy 1.9*
     - scipy
-    - pyqt
+    - pyside-pyzo
     - pyopengl
     - cclib # No Python3
     - chemview
