@@ -468,6 +468,121 @@ class AtomGenerator(object):
         if isinstance(key, int):
             return self.system.get_atom(key)
 
+        start_index, end_index = self._get_start_end_index(index)
+
+        kwargs = {}
+
+        for attr in self.attributes:
+            kwargs[attr.fieldname] = attr.on_get_molecule_entry(self, index)
+
+        return Molecule.from_arrays(**kwargs)
+
+    def guess_bonds(self):
+        '''Guess the bonds between the molecules constituent of the system.
+
+        '''
+        # Can contain intermolecular bonds, we don't want that
+        bonds = guess_bonds(self.r_array, self.type_array)
+
+        # Cleaning -- as a requirement we want that the bond is
+        # between the same molecule
+
+        # We make a map atom-to-molecule
+        mol_map = np.empty(self.n_atoms, dtype='int')
+
+        for ind, (i, n)in enumerate(zip(self.mol_indices, self.mol_n_atoms)):
+            mol_map[i:i + n] = ind
+
+        bonds_mol = mol_map.take(bonds)
+        bonds_mask = bonds_mol[:, 0] == bonds_mol[:, 1]
+
+        self.bonds = bonds[bonds_mask]
+
+    @property
+    def n_bonds(self):
+        return len(self.bonds)
+
+    @property
+    def bonds(self):
+        return self._bonds
+
+    @bonds.setter
+    def bonds(self, val):
+        orig_size = len(self._bonds)
+        self._bonds = np.array(val, dtype='int')
+
+        # Update the bond orders
+        if len(val) > orig_size:
+            self.bond_orders = np.concatenate((self.bond_orders,
+                                               [1] * (len(val) - orig_size))).astype('int')
+        if len(val) < orig_size:
+            self.bond_orders = self.bond_orders[:len(val)]
+
+    def get_atom(self, index):
+        return Atom.from_fields(r=self.r_array[index], export=self.atom_export_array[index],
+                                type=self.type_array[index], mass=self.m_array)
+
+    def _get_start_end_index(self, i):
+        start_index = self.mol_indices[i]
+        end_index = start_index + self.mol_n_atoms[i]
+        return start_index, end_index
+
+    def __repr__(self):
+        counts = Counter(self.type_array)
+        composition = ','.join('{} {}'.format(sym, counts[sym])
+                               for sym in sorted(counts))
+        return 'system({})'.format(composition)
+
+    def where(self, **kwargs):
+        '''Query interface'''
+        res = np.ones(self.n_atoms, dtype='bool')
+
+        # We get all the conditions
+        for k, v in kwargs.items():
+            if k == 'type':
+                if not isinstance(v, str):
+                    raise QueryError('type accepts a string.')
+
+                local = self.type_array == v
+
+            elif k == 'type_in':
+                local = np.zeros(self.n_atoms, dtype='bool')
+                if not isinstance(v, list):
+                    raise QueryError('type_in accepts a list of str.')
+
+                for t in v:
+                    if not isinstance(t, str):
+                        raise QueryError('type_in accepts a list of strings.')
+                    local |= self.type_array == t
+            elif k == 'within_of':
+                if self.box_vectors is None:
+                    raise Exception('Only periodic distance supported')
+                thr, ref = v
+
+                if isinstance(ref, int):
+                    a = self.r_array[ref][
+                        np.newaxis, np.newaxis, :]  # (1, 1, 3,)
+                elif len(ref) == 1:
+                    a = self.r_array[ref][np.newaxis, :]  # (1, 1, 3)
+                else:
+                    a = self.r_array[ref][:, np.newaxis, :]  # (2, 1, 3)
+
+                b = self.r_array[np.newaxis, :, :]
+                dist = periodic_distance(a, b,
+                                         periodic=self.box_vectors.diagonal())
+
+                local = (dist <= thr).sum(axis=0, dtype='bool')
+
+            res &= local
+
+        return res
+
+
+class QueryError(Exception):
+    pass
+
+# Functions to operate on systems
+
 
 def subsystem_from_molecules(orig, selection):
     '''Create a system from the *orig* system by picking the molecules

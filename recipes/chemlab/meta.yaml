@@ -7,14 +7,14 @@ source:
 
 requirements:
   build:
-    - python
+    - python 3.4*
     - setuptools
     - cython
     - numpy 1.9*
-    #- mingwpy
+    # - mingwpy
 
   run:
-    - python
+    - python 3.4*
     - ipython-notebook
     - numpy 1.9*
     - scipy
