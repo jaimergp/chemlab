@@ -24,11 +24,14 @@ source:
 
 requirements:
   build:
-    - python
+    - python 
+    - setuptools
+    #- mingw
 
   run:
-    - python
-    - numpy
+    - python  
+    - numpy 1.9*
+
 
 test:
   # Python imports

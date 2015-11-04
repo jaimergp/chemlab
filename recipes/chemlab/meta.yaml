@@ -3,27 +3,29 @@ package:
   version: 0.4.1
 
 source:
-  git_url: https://github.com/chemlab/chemlab.git
-  git_tag: v0.4.1
+  path: ../../
 
 requirements:
   build:
     - python
     - setuptools
     - cython
-    - numpy
+    - numpy 1.9*
+    #- mingwpy
 
   run:
     - python
     - ipython-notebook
-    - numpy
+    - numpy 1.9*
     - scipy
-    - pyqt
+    - pyside-pyzo
     - pyopengl
     - cclib # No Python3
     - chemview
     - cython
     - six
+    - sip
+    - pandas
 
 test:
   imports:

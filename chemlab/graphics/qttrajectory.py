@@ -1,6 +1,6 @@
-from PyQt4.QtGui import QMainWindow, QApplication, QDockWidget
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import Qt
+from PySide.QtGui import QMainWindow, QApplication, QDockWidget
+from PySide import QtGui, QtCore
+from PySide.QtCore import Qt
 
 import os
 
@@ -15,8 +15,8 @@ resources_dir = os.path.dirname(resources.__file__)
 
 class PlayStopButton(QtGui.QPushButton):
     
-    play = QtCore.pyqtSignal()
-    pause = QtCore.pyqtSignal()
+    play = QtCore.Signal()
+    pause = QtCore.Signal()
     
     def __init__(self):
         css = '''
@@ -93,11 +93,11 @@ class AnimationSlider(QtGui.QSlider):
                                              opt.upsideDown)
 
 class TrajectoryControls(QtGui.QWidget):
-    play = QtCore.pyqtSignal()
-    pause = QtCore.pyqtSignal()
+    play = QtCore.Signal()
+    pause = QtCore.Signal()
 
-    frame_changed = QtCore.pyqtSignal(int)
-    speed_changed = QtCore.pyqtSignal()
+    frame_changed = QtCore.Signal(int)
+    speed_changed = QtCore.Signal()
     
     def __init__(self, parent=None):
         super(TrajectoryControls, self).__init__(parent)
@@ -243,7 +243,7 @@ class TrajectoryControls(QtGui.QWidget):
         
 
 class QtTrajectoryViewer(QMainWindow):
-    """Bases: `PyQt4.QtGui.QMainWindow`
+    """Bases: `PySide.QtGui.QMainWindow`
 
     Interface for viewing trajectory.
 

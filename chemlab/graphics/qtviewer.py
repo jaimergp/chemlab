@@ -2,10 +2,10 @@ import numpy as np
 import time
 
 import sys
-from PyQt4.QtGui import QMainWindow, QApplication
-from PyQt4.QtCore import QTimer, Qt
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtOpenGL import *
+from PySide.QtGui import QMainWindow, QApplication
+from PySide.QtCore import QTimer, Qt
+from PySide import QtCore, QtGui
+from PySide.QtOpenGL import *
 
 from .qchemlabwidget import QChemlabWidget
 
@@ -31,7 +31,7 @@ class FpsDraw(object):
 
 
 class QtViewer(QMainWindow):
-    """Bases: `PyQt4.QtGui.QMainWindow`
+    """Bases: `PySide.QtGui.QMainWindow`
 
     View objects in space.
 
